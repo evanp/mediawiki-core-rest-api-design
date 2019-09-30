@@ -1,0 +1,301 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MediaWiki",
+    "description": "MediaWiki is a free and open-source wiki software package written in PHP. It
+    serves as the platform for Wikipedia and the other Wikimedia projects, used
+    by hundreds of millions of people each month. MediaWiki is localised in over
+    350 languages and its reliability and robust feature set have earned it a large
+    and vibrant community of third-party users and developers.",
+    "license": {
+      "name": "GNU Public License v2.0 or later"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://mediawiki.example/rest/v1"
+      }
+  ],
+  "paths": {
+    "/page/{title}/history": {
+      "summary": "Segmented history of the page",
+      "parameters": [
+        {
+          "name": "title",
+          "description": "Title of the page"
+          "in": "path",
+          "required": "true"
+        },
+        {
+          "name": "older_than",
+          "description": "Return most recent revisions strictly older than this revision, non-inclusive"
+          "in": "query"
+        },
+        {
+          "name": "newer_than",
+          "description": "Return least recent revisions strictly newer than this revision, non-inclusive"
+          "in": "query"
+        },
+        {
+          "name": "filter",
+          "in": "query",
+          "type": "string",
+          "pattern": "(anonymous|bot|reverted)",
+          "description": "If present, only return anonymous, bot, or reverted revisions."
+        }
+      ],
+      "get": {
+        "summary": "Get the history of a page",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "type": "object",
+                "properties": {
+                  "older": {
+                    "type": "string",
+                    "description": "full URL of API endpoint for next (older) segment of history"
+                  },
+                  "newer": {
+                    "type": "string",
+                    "description": "full URL of API endpoint for previous (newer) segment of history"
+                  },
+                  "latest": {
+                    "type": "string",
+                    "description": "full URL of API endpoint for first (latest) of history"
+                  },
+                  "revisions": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "revision ID"
+                        },
+                        "summary": {
+                          "type": "string"
+                        },
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "description": "difference in bytes from previous revision"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "description": "total size of revision in characters"
+                        },
+                        "user": {
+                          "type": "string",
+                          "description": "name of user who made the edit, if any"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/page/{title}/history/counts/edits": {
+      "summary": "Total number of edits to a page",
+      "parameters": [
+        {
+          "name": "title",
+          "description": "Title of the page"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/page/{title}/history/counts/editors": {
+      "summary": "Total number of unique editors to a page",
+      "parameters": [
+        {
+          "name": "title",
+          "description": "Title of the page"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/page/{title}/history/counts/anonedits": {
+      "summary": "Total number of edits by anonymous users to a page",
+      "parameters": [
+        {
+          "name": "title",
+          "description": "Title of the page"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/page/{title}/history/counts/botedits": {
+      "summary": "Total number of edits by bots to a page",
+      "parameters": [
+        {
+          "name": "title",
+          "description": "Title of the page"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/page/{title}/history/counts/revertededits": {
+      "summary": "Total number of edits to a page that were later reverted",
+      "parameters": [
+        {
+          "name": "title",
+          "description": "Title of the page"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/revision/{id}": {
+      "summary": "Data about a page revision",
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Revision ID"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "page_id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  },
+                  "html": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/revision/{id}/compare/{other}": {
+      "summary": "Compare two pages",
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Revision ID"
+          "in": "path",
+          "required": "true"
+        }
+      ],
+      "get": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "object".
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "to": {
+                    "type": "object".
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "diff": {
+                    "type": "object",
+                    "properties": {
+
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
